@@ -3,6 +3,9 @@
 #include <stdio.h>
 #include <string.h>
 
+#ifndef structure_h
+#define structure_h
+
 typedef struct filme
 {
     char* titulo;
@@ -54,7 +57,7 @@ No *cria(int t)
     return novo;
 }
 
-void impressao(No  *a, int andar){
+void impressao(No *a, int andar){
     if(a){
         int i,j;
         for(i=0; i<=a->nChaves-1; i++){
@@ -153,10 +156,10 @@ Filme *buscar_filme(No *filmes, char titulo[81], int ano)
 {
     if(!filmes) return NULL;
     int i=0;
-    while((i<filmes->nChaves) && (strcmp(filmes->chave[i]->titulo, titulo) < 0)) {
-        if(filmes->chave[i]->titulo == titulo && filmes->chave[i]->ano == ano) return filmes->chave[i];
-        else return buscar_filme(filmes->filhos[i], titulo, ano);
-    }
+    while((i<filmes->nChaves) && (strcmp(filmes->chave[i]->titulo, titulo) < 0))i++;
+    //printf("%s", filmes->chave[i]->titulo);
+    if(strcmp(filmes->chave[i]->titulo, titulo) == 0) return filmes->chave[i];
+    else return buscar_filme(filmes->filhos[i], titulo, ano);
 }
 
 void mostrar_filme(No *filmes, char titulo[81], int ano)
