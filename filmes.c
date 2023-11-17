@@ -40,7 +40,7 @@ int main() {
                 char nome_arquivo[20];
                 printf("Insira o caminho do arquivo: ");
                 fgets(nome_arquivo, 20, stdin);
-                lerDadosArquivo("dados.txt", &listaFilmes, &numFilmes);
+                lerDadosArquivo(nome_arquivo, *filmes, 0, t)
                 break;
             }
 
