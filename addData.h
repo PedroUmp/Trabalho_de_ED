@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <structure.h>
+//#include <structure.h>
 
 #define MAX_TAM 200
 

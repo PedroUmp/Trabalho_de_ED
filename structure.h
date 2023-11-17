@@ -49,7 +49,7 @@ No *cria(int t)
     novo->nChaves = 0;
     novo->eFolha=1;
 
-    novo->chave = (Filme *)malloc(sizeof(Filme)*(2*t-1));
+    novo->chave = (Filme **)malloc(sizeof(Filme*)*(2*t-1));
     novo->filhos = (No**)malloc(sizeof(No*)*t*2);
 
     int i;
@@ -162,19 +162,37 @@ Filme *buscar_filme(No *filmes, char titulo[81], int ano)
     else return buscar_filme(filmes->filhos[i], titulo, ano);
 }
 
-void mostrar_filme(No *filmes, char titulo[81], int ano)
+Filme *buscar_filme(No *filmes, char titulo[81], int ano)
 {
-    // print genero, diretor, duracao - informações SUBORDINADAS
+    if(!filmes) return NULL;
+    int i=0;
+    while((i<filmes->nChaves) && (strcmp(filmes->chave[i]->titulo, titulo) < 0))i++;
+    if(strcmp(filmes->chave[i]->titulo, titulo) == 0) return filmes->chave[i];
+    else return buscar_filme(filmes->filhos[i], titulo, ano);
 }
 
-No *alterar(No *filmes, char titulo[81], int ano, char cGenero[31], char cDiretor[51], int cDuracao)
+Filme *buscar_info_subordinadas(No *filmes, char titulo[81], int ano)
 {
-    // alterar somente as informações SUBORDINADAS - genero, diretor, duracao
+    if(!filmes) return NULL;
+    int i=0;
+    while((i<filmes->nChaves) && (strcmp(filmes->chave[i]->titulo, titulo) < 0))i++;
+    if(strcmp(filmes->chave[i]->titulo, titulo) == 0 && filmes->chave[i]->ano == ano) {
+        printf("Gênero: %s\nDuracao %d \n Diretor%s", filmes->chave[i]->genero, filmes->chave[i]->duracao, filmes->chave[i]->diretor);
+    }
+    else return buscar_filme(filmes->filhos[i], titulo, ano);
+}
+
+No *alterar(No *filmes, char titulo[81], int ano, char nGenero[31], char nDiretor[51], int nDuracao) {
+    Filme *filme = buscar_filme(filmes, titulo, ano);
+    filme->genero = nGenero;
+    filme->diretor = nDiretor;
+    filme->duracao = nDuracao;
+    return filmes;
 }
 
 void filmes_diretor(No *filmes, char diretor[51])
 {
-    // print dos dados dos filmes com o diretor especificado
+    
 }
 
 No *retirar_diretor(No *filmes, char diretor[51])
@@ -191,3 +209,5 @@ No *retirar_franquia(No *filmes, char franquia[81])
 {
     // retirar todos os filmes com a franquia especificada
 }
+
+#endif 

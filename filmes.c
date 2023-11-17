@@ -1,17 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <TARVB.H>
-#include <structure.h>
-
 
 #include "structure.h"
 #include "addData.h"
 
 int main() {
-    size_t t_titulo = 81;
-    size_t t_diretor = 51;
-    size_t t_genero = 31;
+   
+    char* titulo = (char *) malloc(sizeof(char) * 81);
+    char* diretor = (char *) malloc(sizeof(char) * 51);
+    char *genero = (char *) malloc(sizeof(char) * 31);
+    int ano;
+    int duracao;
 
     int t;
     printf("Digite o grau t: ");
@@ -29,6 +29,8 @@ int main() {
         printf("3 - Remover filme\n");
         printf("4 - Buscar filme e receber informações subordinadas\n");
         printf("5 - Listar filmes em ordem alfabética\n");
+        printf("6 - Alterar as informações subordinadas");
+        printf("7 - Buscar todos os filmes de um determinado diretor");
         printf("10 - Fechar o programa\n");
 
         int resposta;
@@ -40,18 +42,11 @@ int main() {
                 char nome_arquivo[20];
                 printf("Insira o caminho do arquivo: ");
                 fgets(nome_arquivo, 20, stdin);
-                lerDadosArquivo(nome_arquivo, *filmes, 0, t)
+                //lerDadosArquivo(nome_arquivo, *filmes, 0, t);
                 break;
             }
 
             case 2: {
-                char* titulo = (char *) malloc(sizeof(char) * 81);
-                char* diretor = (char *) malloc(sizeof(char) * 51);
-                char *genero = (char *) malloc(sizeof(char) * 31);
-                int ano;
-                int duracao;
-
-
                 printf("Qual o nome do filme?");
                 fgets(titulo, 81, stdin);
                 titulo[strcspn(titulo, "\n")] = '\0';
@@ -100,7 +95,28 @@ int main() {
             }
 
             case 6: {
-                break;
+
+                printf("Qual filme você deseja alterar:");
+                fgets(titulo, 81, stdin);
+                titulo[strcspn(titulo, "\n")] = '\0';
+
+                printf("Quando o filme foi lançado?");
+                scanf("%d", &ano);
+                getchar();
+
+                printf("Qual é o novo diretor?");
+                fgets(diretor, 51, stdin);
+                diretor[strcspn(diretor, "\n")] = '\0';
+
+                printf("Qual é a nova duração do filme?");
+                scanf("%d", &duracao);
+                getchar();
+
+                printf("Qual o novo gênero do filme?");
+                fgets(genero, 31, stdin);
+                genero[strcspn(genero, "\n")] = '\0';
+
+                filmes = alterar(filmes, titulo, ano, genero, diretor, duracao);
             }
 
             case 7: {
