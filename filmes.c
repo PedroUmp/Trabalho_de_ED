@@ -26,12 +26,15 @@ int main() {
         printf("O que você deseja fazer: \n");
         printf("1 - Inserir filme com arquivo \n");
         printf("2 - Inserir filme com input\n");
-        printf("3 - Remover filme\n");
+        printf("3 - Remover filme por nome e ano de lançamento\n");
         printf("4 - Buscar filme e receber informações subordinadas\n");
         printf("5 - Listar filmes em ordem alfabética\n");
-        printf("6 - Alterar as informações subordinadas");
-        printf("7 - Buscar todos os filmes de um determinado diretor");
-        printf("10 - Fechar o programa\n");
+        printf("6 - Alterar as informações subordinadas\n");
+        printf("7 - Buscar todos os filmes de um determinado diretor\n");
+        printf("8 - Retirar todos os filmes de um determinado diretor\n");
+        printf("9 - Retirar todos os filmes de um determinado gênero\n");
+        printf("10 - Remover todos os filmes de uma franquia\n");
+        printf("11 - Fechar o programa\n");
 
         int resposta;
         scanf("%d", &resposta);
@@ -68,7 +71,10 @@ int main() {
                 genero[strcspn(genero, "\n")] = '\0';
 
                 Filme *novo = criar_filme(titulo, ano, diretor, duracao, genero);
+                printf("\nFilme criado: %s %d\n", novo->titulo, novo->ano);
                 filmes = inserir_filme(filmes, novo, t);
+
+                break;
             }
 
             case 3: {
@@ -76,21 +82,25 @@ int main() {
             }
 
             case 4: {
-                char *titulo = (char *) malloc(sizeof(char) * 81);
-                int ano;
+                Filme *filme = NULL;
+
                 printf("Qual nome do filme você deseja buscar?\n");
-                scanf("%s", titulo);
+                fgets(titulo, 81, stdin);
+                titulo[strcspn(titulo, "\n")] = '\0';
+
                 printf("Em que ano o filme foi lançado?\n");
                 scanf("%d", &ano);
+                getchar();
 
-                Filme *filme = buscar_filme(filmes, titulo, ano);
-                printf("%s", filme->titulo);
+                buscar_filme(filmes, titulo, ano);
+                if(filme) ("Diretor: %s\nDuracao: %d\nGênero: %s",filme->diretor, filme->duracao, filme->genero);
+                else printf("Filme não encontrado");
 
                 break;
             }
 
             case 5: {
-                impressao(filmes, 1);
+                impressao(filmes);
                 break;
             }
 
@@ -117,6 +127,8 @@ int main() {
                 genero[strcspn(genero, "\n")] = '\0';
 
                 filmes = alterar(filmes, titulo, ano, genero, diretor, duracao);
+
+                break;
             }
 
             case 7: {
@@ -130,14 +142,18 @@ int main() {
             case 9: {
                 break;
             }
-
             case 10: {
+                break;
+            }
+
+            case 11: {
                 continua = 0;
                 break;
             }
             default: {
                 printf("Opção inválida");
             }
+
         }
 
     }
