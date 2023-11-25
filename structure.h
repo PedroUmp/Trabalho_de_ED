@@ -82,63 +82,89 @@ void impressao(No* filmes) {
 
     int i = 0;
     while (i < filmes->nChaves) {
-        printf("%s %d\n", filmes->chave[i]->titulo, filmes->chave[i]->ano);
         if (filmes->filhos[i]) impressao(filmes->filhos[i]);
+        printf("%s %d %s %d %s\n", filmes->chave[i]->titulo, filmes->chave[i]->ano, filmes->chave[i]->diretor, filmes->chave[i]->duracao, filmes->chave[i]->genero);
         i++;
+    }
+    if(filmes->filhos[i]) impressao(filmes->filhos[i]);
+}
+
+No *liberacao(No *filmes){
+    if(filmes){
+        if(!filmes->eFolha){
+            int i;
+            for(i = 0; i <= filmes->nChaves; i++) liberacao(filmes->filhos[i]);
+        }
+        free(filmes->chave);
+        free(filmes->filhos);
+        free(filmes);
+        return NULL;
     }
 }
 
 
-No *divisao(No *x, int i, No * y, int t) {
-    No *z =cria(t);
-    z->nChaves= t - 1;
+
+No* divisao(No *x, int i, No * y, int t) {
+    No *z = cria(t);
+    z->nChaves = t - 1;
     z->eFolha = y->eFolha;
 
     int j;
-    for(j=0;j<t-1;j++) {
-        z->chave[j] = y->chave[j+t];
+    for (j = 0; j < t - 1; j++) {
+        z->chave[j] = y->chave[j + t];
     }
-    if(y->eFolha == 0){
-
-        for(j=0;j<t;j++){
-            z->filhos[j] = y->filhos[j+t];
-            y->filhos[j+t] = NULL;
+    if (y->eFolha == 0) {
+        for (j = 0; j < t; j++) {
+            z->filhos[j] = y->filhos[j + t];
+            y->filhos[j + t] = NULL;
         }
     }
 
-    y->nChaves = t-1;
-    for(j=x->nChaves; j>=i; j--) x->filhos[j+1]=x->filhos[j];
+    y->nChaves = t - 1;
+
+    for (j = x->nChaves; j >= i; j--) {
+        x->filhos[j + 1] = x->filhos[j];
+    }
     x->filhos[i] = z;
-    for(j=x->nChaves; j>=i; j--)  x->chave[j + 1] = x->chave[j];
-    x->chave[i-1] = y->chave[t-1];
+
+    for (j = x->nChaves - 1; j >= i - 1; j--) {
+        x->chave[j + 1] = x->chave[j];
+    }
+    x->chave[i - 1] = y->chave[t - 1];
+
     x->nChaves++;
     return x;
 }
 
 No* inserir_filme_incompleto(No *filmes, Filme *filme, int t) {
-    int i = filmes->nChaves-1;
+    int i = filmes->nChaves - 1;
 
     if (filmes->eFolha) {
         while (i >= 0 && strcmp(filme->titulo, filmes->chave[i]->titulo) < 0) {
-            filmes->chave[i+1] = filmes->chave[i];
+            filmes->chave[i + 1] = filmes->chave[i];
             i--;
         }
-        filmes->chave[i+1] = filme;
+        filmes->chave[i + 1] = filme;
         filmes->nChaves++;
         return filmes;
     }
 
-    while((i>=0) && (strcmp(filme->titulo, filmes->chave[i]->titulo) < 0)) i--;
+    while ((i >= 0) && (strcmp(filme->titulo, filmes->chave[i]->titulo) < 0)) {
+        i--;
+    }
     i++;
 
-    if(filmes->filhos[i]->nChaves == ((2*t)-1)){
-        filmes = divisao(filmes, (i+1), filmes->filhos[i], t);
-
-        if(strcmp(filme->titulo, filmes->chave[i]->titulo) > 0) i++;
+    if (filmes->filhos[i]->nChaves == (2 * t) - 1) {
+        filmes = divisao(filmes, (i + 1), filmes->filhos[i], t);
+        if (strcmp(filme->titulo, filmes->chave[i]->titulo) > 0) {
+            i++;
+        }
     }
     filmes->filhos[i] = inserir_filme_incompleto(filmes->filhos[i], filme, t);
     return filmes;
 }
+
+
 
 No* inserir_filme(No *filmes, Filme *filme, int t)
 {
@@ -174,21 +200,10 @@ Filme *buscar_filme(No *filmes, char titulo[81], int ano)
 {
     if(!filmes) return NULL;
     int i=0;
-    while((i<filmes->nChaves) && (strcmp(filmes->chave[i]->titulo, titulo) > 0))i++;
+    while((i<filmes->nChaves) && (strcmp(filmes->chave[i]->titulo, titulo) < 0))i++;
     if(strcmp(filmes->chave[i]->titulo, titulo) == 0) return filmes->chave[i];
     else return buscar_filme(filmes->filhos[i], titulo, ano);
 }
-
-//Filme *buscar_info_subordinadas(No *filmes, char titulo[81], int ano)
-//{
-//    if(!filmes) return NULL;
-//    int i=0;
-//    while((i<filmes->nChaves) && (strcmp(filmes->chave[i]->titulo, titulo) > 0))i++;
-//    if(strcmp(filmes->chave[i]->titulo, titulo) == 0 && filmes->chave[i]->ano == ano) {
-//        printf("Gênero: %s\nDuracao %d \n Diretor%s", filmes->chave[i]->genero, filmes->chave[i]->duracao, filmes->chave[i]->diretor);
-//    }
-//    return buscar_info_subordinadas(filmes->filhos[i], titulo, ano);
-//}
 
 No *alterar(No *filmes, char titulo[81], int ano, char nGenero[31], char nDiretor[51], int nDuracao) {
     Filme *filme = buscar_filme(filmes, titulo, ano);
@@ -198,14 +213,14 @@ No *alterar(No *filmes, char titulo[81], int ano, char nGenero[31], char nDireto
     return filmes;
 }
 
-void filmes_diretor(No *filmes, char diretor[51])
+void printar_filmes_diretor(No *filmes, char diretor[51])
 {
     int i = 0;
-    while(i< filmes->nChaves) {
+    while(i < filmes->nChaves) {
         if(filmes->chave[i]->diretor) {
-            printf("%s %d", filmes->chave[i]->titulo, filmes->chave[i]->ano);
+            printf("%s %d\n", filmes->chave[i]->titulo, filmes->chave[i]->ano);
         }
-        if(filmes->filhos[i]) filmes_diretor(filmes->filhos[i], diretor);
+        if(filmes->filhos[i]) printar_filmes_diretor(filmes->filhos[i], diretor);
         i++;
     }
 }
