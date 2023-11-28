@@ -25,17 +25,18 @@ int main()
     while (continua)
     {
         printf("\n");
-        printf("O que você deseja fazer: \n");
-        printf("1 - Fechar o programa \n");                                // funcionando
-        printf("2 - Inserir filme com input\n");                           // funcionando
-        printf("3 - Remover filme por nome e ano de lançamento\n");        // Atharv
-        printf("4 - Buscar filme e receber informações subordinadas\n");   // funcionando (acho que não)
-        printf("5 - Listar filmes em ordem alfabética\n");                 // funcionando
-        printf("6 - Alterar as informações subordinadas\n");               // funcionando
-        printf("7 - Buscar todos os filmes de um determinado diretor\n");  // funcionando
+        printf("O que você deseja fazer?\n");
+        printf("1 - Fechar o programa \n");
+        printf("2 - Inserir filme com input\n");
+        printf("3 - Remover filme por nome e ano de lançamento\n"); // Atharv
+        printf("4 - Buscar filme e receber informações subordinadas\n");
+        printf("5 - Listar filmes em ordem alfabética\n");
+        printf("6 - Alterar as informações subordinadas\n");
+        printf("7 - Buscar todos os filmes de um determinado diretor\n");
         printf("8 - Retirar todos os filmes de um determinado diretor\n"); // Atharv
         printf("9 - Retirar todos os filmes de um determinado gênero\n");  // Atharv
         printf("10 - Retirar todos os filmes de uma franquia\n");          // Gabriel
+        printf("Digite aqui: ");
 
         int resposta;
         scanf("%d", &resposta);
@@ -50,60 +51,73 @@ int main()
             free(genero);
             filmes = liberacao(filmes);
             continua = 0;
-
             break;
         }
 
         case 2:
         {
-            printf("Qual o nome do filme?");
+            printf("Qual o nome do filme? ");
             fgets(titulo, 81, stdin);
             titulo[strcspn(titulo, "\n")] = '\0';
 
-            printf("Quando o filme foi lançado?");
+            printf("Quando o filme foi lançado? ");
             scanf("%d", &ano);
             getchar();
 
-            printf("Quem é o diretor do filme?");
+            printf("Quem é o diretor do filme? ");
             fgets(diretor, 51, stdin);
             diretor[strcspn(diretor, "\n")] = '\0';
 
-            printf("Quanto tempo em minutos dura o filme?");
+            printf("Quanto tempo em minutos dura o filme? ");
             scanf("%d", &duracao);
             getchar();
 
-            printf("Qual o gênero do filme?");
+            printf("Qual o gênero do filme? ");
             fgets(genero, 31, stdin);
             genero[strcspn(genero, "\n")] = '\0';
 
             Filme *novo = criar_filme(titulo, ano, diretor, duracao, genero);
             printf("\nFilme criado: %s %d\n", novo->titulo, novo->ano);
             filmes = inserir_filme(filmes, novo, t);
-
             break;
         }
 
         case 3:
         {
+            printf("Qual o nome do filme? ");
+            fgets(titulo, 81, stdin);
+            titulo[strcspn(titulo, "\n")] = '\0';
+
+            printf("Quando o filme foi lançado? ");
+            scanf("%d", &ano);
+            getchar();
+
+            if (buscar_filme(filmes, titulo, ano) == NULL)
+            {
+                printf("Filme não encontrado\n");
+                break;
+            }
+
+            // filmes = retirar_filme(filmes, titulo, ano, t);
+            printf("Filme removido\n");
             break;
         }
 
         case 4:
         {
-            printf("Qual nome do filme você deseja buscar?\n");
+            printf("Qual nome do filme você deseja buscar? ");
             fgets(titulo, 81, stdin);
             titulo[strcspn(titulo, "\n")] = '\0';
 
-            printf("Em que ano o filme foi lançado?\n");
+            printf("Em que ano o filme foi lançado? ");
             scanf("%d", &ano);
             getchar();
 
             Filme *filme = buscar_filme(filmes, titulo, ano);
             if (filme)
-                printf("Diretor: %s\nDuracao: %d\nGenero:%s\n", filme->diretor, filme->duracao, filme->genero);
+                printf("Diretor: %s\nDuracao: %d\nGenero: %s\n", filme->diretor, filme->duracao, filme->genero);
             else
-                printf("Filme não encontrado");
-
+                printf("Filme não encontrado\n");
             break;
         }
 
@@ -142,12 +156,11 @@ int main()
 
         case 7:
         {
-            printf("Qual diretor voce quer buscar?");
+            printf("Qual diretor voce quer buscar? ");
             fgets(diretor, 51, stdin);
-            diretor[strcspn(genero, "\n")] = '\0';
+            diretor[strcspn(diretor, "\n")] = '\0';
 
             printar_filmes_diretor(filmes, diretor);
-
             break;
         }
 
@@ -168,7 +181,7 @@ int main()
 
         default:
         {
-            printf("Opção inválida");
+            printf("Opção inválida\n");
         }
         }
     }

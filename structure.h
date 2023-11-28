@@ -35,8 +35,6 @@ Filme *criar_filme(char *titulo, int ano, char *diretor, int duracao, char *gene
     strcpy(novo->genero, genero);
     novo->duracao = duracao;
 
-    printf("Filme criado: %s %d\n", novo->titulo, novo->ano);
-
     return novo;
 }
 
@@ -106,6 +104,13 @@ No *liberacao(No *filmes)
             int i;
             for (i = 0; i <= filmes->nChaves; i++)
                 liberacao(filmes->filhos[i]);
+        }
+        for (int j = 0; j < filmes->nChaves; j++)
+        {
+            free(filmes->chave[j]->titulo);
+            free(filmes->chave[j]->diretor);
+            free(filmes->chave[j]->genero);
+            free(filmes->chave[j]);
         }
         free(filmes->chave);
         free(filmes->filhos);
@@ -212,10 +217,6 @@ No *inserir_filme(No *filmes, Filme *filme, int t)
     return filmes;
 }
 
-No *retirar_filme(No *filmes, char titulo[81], int ano)
-{
-}
-
 Filme *buscar_filme(No *filmes, char titulo[81], int ano)
 {
     if (!filmes)
@@ -223,10 +224,11 @@ Filme *buscar_filme(No *filmes, char titulo[81], int ano)
     int i = 0;
     while ((i < filmes->nChaves) && (strcmp(filmes->chave[i]->titulo, titulo) < 0))
         i++;
-    if (strcmp(filmes->chave[i]->titulo, titulo) == 0)
+    if ((i < filmes->nChaves) && strcmp(filmes->chave[i]->titulo, titulo) == 0 && (filmes->chave[i]->ano == ano))
         return filmes->chave[i];
-    else
-        return buscar_filme(filmes->filhos[i], titulo, ano);
+    if (filmes->eFolha == 1)
+        return NULL;
+    return buscar_filme(filmes->filhos[i], titulo, ano);
 }
 
 No *alterar(No *filmes, char titulo[81], int ano, char nGenero[31], char nDiretor[51], int nDuracao)
@@ -234,26 +236,33 @@ No *alterar(No *filmes, char titulo[81], int ano, char nGenero[31], char nDireto
     Filme *filme = buscar_filme(filmes, titulo, ano);
     if (filme)
     {
-        filme->genero = nGenero;
-        filme->diretor = nDiretor;
+        strcpy(filme->genero, nGenero);
+        strcpy(filme->diretor, nDiretor);
         filme->duracao = nDuracao;
     }
-
+    else
+    {
+        printf("Filme não alterado e não encontrado\n");
+    }
     return filmes;
 }
 
 void printar_filmes_diretor(No *filmes, char diretor[51])
 {
+    if (!filmes)
+        return;
     int i = 0;
     while (i < filmes->nChaves)
     {
-        if (filmes->chave[i]->diretor)
+        if (strstr(filmes->chave[i]->diretor, diretor) != NULL)
         {
             printf("%s %d\n", filmes->chave[i]->titulo, filmes->chave[i]->ano);
         }
-        if (filmes->filhos[i])
-            printar_filmes_diretor(filmes->filhos[i], diretor);
         i++;
+    }
+    for (int j = 0; j <= filmes->nChaves; j++)
+    {
+        printar_filmes_diretor(filmes->filhos[j], diretor);
     }
 }
 
