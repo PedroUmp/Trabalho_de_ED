@@ -27,15 +27,16 @@ int main()
         printf("\n");
         printf("O que você deseja fazer?\n");
         printf("1 - Fechar o programa \n");
-        printf("2 - Inserir filme com input\n");
-        printf("3 - Remover filme por nome e ano de lançamento\n"); // Atharv
+        printf("2 - Inserir filme com todas as informações\n");
+        printf("3 - Remover filme por nome e ano de lançamento\n");
         printf("4 - Buscar filme e receber informações subordinadas\n");
         printf("5 - Listar filmes em ordem alfabética\n");
-        printf("6 - Alterar as informações subordinadas\n");
+        printf("6 - Alterar filme com as informações subordinadas\n");
         printf("7 - Buscar todos os filmes de um determinado diretor\n");
         printf("8 - Retirar todos os filmes de um determinado diretor\n"); // Atharv
         printf("9 - Retirar todos os filmes de um determinado gênero\n");  // Atharv
         printf("10 - Retirar todos os filmes de uma franquia\n");          // Gabriel
+        printf("11 - Listar total de filmes\n");
         printf("Digite aqui: ");
 
         int resposta;
@@ -92,14 +93,7 @@ int main()
             scanf("%d", &ano);
             getchar();
 
-            if (buscar_filme(filmes, titulo, ano) == NULL)
-            {
-                printf("Filme não encontrado\n");
-                break;
-            }
-
-            // filmes = retirar_filme(filmes, titulo, ano, t);
-            printf("Filme removido\n");
+            filmes = retirar_filme(filmes, titulo, ano, t);
             break;
         }
 
@@ -123,29 +117,30 @@ int main()
 
         case 5:
         {
+            printf("\nLista de filmes:\n");
             impressao(filmes);
             break;
         }
 
         case 6:
         {
-            printf("Qual filme você deseja alterar:");
+            printf("Qual filme você deseja alterar? ");
             fgets(titulo, 81, stdin);
             titulo[strcspn(titulo, "\n")] = '\0';
 
-            printf("Quando o filme foi lançado?");
+            printf("Quando o filme foi lançado? ");
             scanf("%d", &ano);
             getchar();
 
-            printf("Qual é o novo diretor?");
+            printf("Qual é o novo diretor? ");
             fgets(diretor, 51, stdin);
             diretor[strcspn(diretor, "\n")] = '\0';
 
-            printf("Qual é a nova duração do filme?");
+            printf("Qual é a nova duração do filme? ");
             scanf("%d", &duracao);
             getchar();
 
-            printf("Qual o novo gênero do filme?");
+            printf("Qual o novo gênero do filme? ");
             fgets(genero, 31, stdin);
             genero[strcspn(genero, "\n")] = '\0';
 
@@ -160,6 +155,7 @@ int main()
             fgets(diretor, 51, stdin);
             diretor[strcspn(diretor, "\n")] = '\0';
 
+            printf("\nFilmes do diretor %s:\n", diretor);
             printar_filmes_diretor(filmes, diretor);
             break;
         }
@@ -174,35 +170,30 @@ int main()
             break;
         }
 
-            case 10:
-            {
-                char *franquia = (char*)malloc(sizeof(char)*81);
-                No *copia_Filme = filmes;
-                if(!franquia){
-                    printf("Falha na alocação");
-                    break;
-                }
-                printf("Digite a franquia que você deseja remover: ");
-                fgets(franquia, 81, stdin);
-                franquia[strcspn(genero, "\n")] = '\0';
-                filmes = removerFilme(filmes, "Star Wars", t);
-                free(franquia);
-                //fazer todos os testes de allocação bem sucedida
-                break;
-            }
+        case 10:
+        {
+            // char *franquia = (char *)malloc(sizeof(char) * 81);
+            // No *copia_Filme = filmes;
+            // if (!franquia)
+            // {
+            //     printf("Falha na alocação");
+            //     break;
+            // }
+            // printf("Digite a franquia que você deseja remover: ");
+            // fgets(franquia, 81, stdin);
+            // franquia[strcspn(genero, "\n")] = '\0';
+            // filmes = removerFilme(filmes, "Star Wars", t);
+            // free(franquia);
+            // // fazer todos os testes de allocação bem sucedida
+            break;
+        }
 
-            case 11: //para teste
-            {
-                Filme *novo = criar_filme("Star Wars Episode IV A New Hope", 1922, "george lucas", 120, "acão");
-                Filme *novo2 = criar_filme("Star Wars Episode 2 quero transar", 1920, "george lucas", 120, "acão");
-                Filme *novo3 = criar_filme("Star Wars Episode 3 pierre dá pro arthur", 1920, "george lucas", 120, "acão");
-                Filme *novo4 = criar_filme("maze runner penis", 1920, "george lucas", 412, "acão");
-                printf("\nFilme criado: %s %d\n", novo->titulo, novo->ano);
-                filmes = inserir_filme(filmes, novo, t);
-                filmes = inserir_filme(filmes, novo2, t);
-                filmes = inserir_filme(filmes, novo3, t);
-                filmes = inserir_filme(filmes, novo4, t);
-            }
+        case 11:
+        {
+            int num = num_filmes(filmes);
+            printf("Total de Filmes: %d\n", num);
+            break;
+        }
 
         default:
         {

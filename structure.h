@@ -95,30 +95,6 @@ void impressao(No *filmes)
         impressao(filmes->filhos[i]);
 }
 
-No *liberacao(No *filmes)
-{
-    if (filmes)
-    {
-        if (!filmes->eFolha)
-        {
-            int i;
-            for (i = 0; i <= filmes->nChaves; i++)
-                liberacao(filmes->filhos[i]);
-        }
-        for (int j = 0; j < filmes->nChaves; j++)
-        {
-            free(filmes->chave[j]->titulo);
-            free(filmes->chave[j]->diretor);
-            free(filmes->chave[j]->genero);
-            free(filmes->chave[j]);
-        }
-        free(filmes->chave);
-        free(filmes->filhos);
-        free(filmes);
-        return NULL;
-    }
-}
-
 No *divisao(No *x, int i, No *y, int t)
 {
     No *z = cria(t);
@@ -161,7 +137,7 @@ No *inserir_filme_incompleto(No *filmes, Filme *filme, int t)
 {
     int i = filmes->nChaves - 1;
 
-if (filmes->eFolha)
+    if (filmes->eFolha)
     {
         while (i >= 0 && strcmp(filme->titulo, filmes->chave[i]->titulo) < 0)
         {
@@ -266,132 +242,306 @@ void printar_filmes_diretor(No *filmes, char diretor[51])
     }
 }
 
-No *retirar_diretor(No *filmes, char diretor[51])
+int num_filmes(No *filmes)
 {
-    // retirar todos os filmes com o diretor especificado
-}
-
-No *retirar_genero(No *filmes, char genero[31])
-{
-    // retirar todos os filmes com o genero especificado
-}
-
-int buscarChave(No* no, const char* franquia) {
+    if (!filmes)
+        return 0;
     int i = 0;
-    while (i < no->nChaves && strcmp(no->chave[i]->titulo, franquia) < 0) {
+    while (i < filmes->nChaves)
+    {
         i++;
+    }
+    for (int j = 0; j <= filmes->nChaves; j++)
+    {
+        i += num_filmes(filmes->filhos[j]);
     }
     return i;
 }
 
-// Função para remover uma chave de um nó
-void removerChave(No* no, int indice) {
-    free(no->chave[indice]->titulo);
-    free(no->chave[indice]->diretor);
-    free(no->chave[indice]->genero);
-    free(no->chave[indice]);
-
-    for (int i = indice; i < no->nChaves - 1; i++) {
-        no->chave[i] = no->chave[i + 1];
-        no->filhos[i + 1] = no->filhos[i + 2];
-    }
-
-    no->nChaves--;
-}
-
-// Função para remover um filme de uma árvore B
-No *removerFilme(No* raiz, const char* franquia, int ordem) {
-    if (!raiz) {
+No *liberacao(No *filmes)
+{
+    if (filmes)
+    {
+        if (!filmes->eFolha)
+        {
+            for (int i = 0; i <= filmes->nChaves; i++)
+                liberacao(filmes->filhos[i]);
+        }
+        for (int i = 0; i < filmes->nChaves; i++)
+        {
+            free(filmes->chave[i]->titulo);
+            free(filmes->chave[i]->diretor);
+            free(filmes->chave[i]->genero);
+            free(filmes->chave[i]);
+        }
+        free(filmes->chave);
+        free(filmes->filhos);
+        free(filmes);
         return NULL;
     }
+}
 
-    int indice = buscarChave(raiz, franquia);
-
-    if (indice < raiz->nChaves && strcmp(raiz->chave[indice]->titulo, franquia) == 0) {
-        // A chave está presente neste nó
-        if (raiz->eFolha) {
-            // Se o nó é uma folha, apenas remova a chave
-            removerChave(raiz, indice);
-        } else {
-            // Se o nó não é uma folha, substitua a chave pelo sucessor in-order
-            No* sucessor = raiz->filhos[indice + 1];
-            while (!sucessor->eFolha) {
-                sucessor = sucessor->filhos[0];
-            }
-            raiz->chave[indice] = sucessor->chave[0];
-            raiz->filhos[indice + 1] = removerFilme(raiz->filhos[indice + 1], sucessor->chave[0]->titulo, ordem);
+No *free_filmes(No *filmes)
+{
+    if (filmes)
+    {
+        if (!filmes->eFolha)
+        {
+            for (int i = 0; i <= filmes->nChaves; i++)
+                free_filmes(filmes->filhos[i]);
         }
-    } else {
-        // A chave pode estar presente nos filhos do nó
-        int ehUltimo = (indice == raiz->nChaves);
+        free(filmes->chave);
+        free(filmes->filhos);
+        free(filmes);
+        return NULL;
+    }
+}
 
-        if (raiz->filhos[indice]->nChaves < ordem) {
-            // Se o filho que contém a chave tem menos de ORDEM-1 chaves, preencha-o
-            // primeiro
-            // Se o filho à esquerda tem mais de ORDEM-1 chaves, empreste uma chave
-            if (indice != 0 && raiz->filhos[indice - 1]->nChaves >= ordem) {
-                raiz->filhos[indice]->chave[0] = raiz->chave[indice - 1];
-                raiz->chave[indice - 1] = raiz->filhos[indice - 1]->chave[raiz->filhos[indice - 1]->nChaves - 1];
-                raiz->filhos[indice - 1]->nChaves--;
+No *free_filmes_remove(No *filmes)
+{
+    free(filmes->chave);
+    free(filmes->filhos);
+    free(filmes);
+    return NULL;
+}
+
+No *retirar_filme_helper(No *filmes, char titulo[81], int t, Filme *p)
+{
+    if (!filmes)
+        return filmes;
+    int i;
+    for (i = 0; i < filmes->nChaves && strcmp(titulo, filmes->chave[i]->titulo) > 0; ++i)
+        ;
+    if (i < filmes->nChaves && strcmp(titulo, filmes->chave[i]->titulo) == 0)
+    {
+        if (filmes->eFolha) // 1
+        {
+            int j;
+            for (j = i; j < filmes->nChaves - 1; j++)
+            {
+                filmes->chave[j] = filmes->chave[j + 1];
             }
-                // Se o filho à direita tem mais de ORDEM-1 chaves, empreste uma chave
-            else if (!ehUltimo && raiz->filhos[indice + 1]->nChaves >= ordem) {
-                raiz->filhos[indice]->chave[0] = raiz->chave[indice];
-                raiz->chave[indice] = raiz->filhos[indice + 1]->chave[0];
-                for (int i = 0; i < raiz->filhos[indice + 1]->nChaves - 1; i++) {
-                    raiz->filhos[indice + 1]->chave[i] = raiz->filhos[indice + 1]->chave[i + 1];
-                }
-                raiz->filhos[indice + 1]->nChaves--;
+            filmes->nChaves--;
+            if (!filmes->nChaves)
+            {
+                free_filmes(filmes);
+                filmes = NULL;
             }
-                // Combinação com o filho à esquerda
-            else if (indice != 0) {
-                raiz->filhos[indice - 1]->chave[raiz->filhos[indice - 1]->nChaves] = raiz->chave[indice - 1];
-                for (int i = 0; i < raiz->filhos[indice]->nChaves; i++) {
-                    raiz->filhos[indice - 1]->chave[raiz->filhos[indice - 1]->nChaves + 1 + i] = raiz->filhos[indice]->chave[i];
-                }
-                raiz->filhos[indice - 1]->nChaves += 1 + raiz->filhos[indice]->nChaves;
-                raiz->filhos[indice - 1]->filhos[raiz->filhos[indice - 1]->nChaves] = raiz->filhos[indice]->filhos[0];
-                free(raiz->filhos[indice]);
-                for (int i = indice - 1; i < raiz->nChaves - 1; i++) {
-                    raiz->chave[i] = raiz->chave[i + 1];
-                    raiz->filhos[i + 1] = raiz->filhos[i + 2];
-                }
-                raiz->nChaves--;
-                if (raiz->nChaves == 0) {
-                    No* tmp = raiz->filhos[0];
-                    free(raiz);
-                    raiz = tmp;
-                }
-                raiz->filhos[indice - 1] = removerFilme(raiz->filhos[indice - 1], franquia, ordem);
+            return filmes;
+        }
+        if (!filmes->eFolha && filmes->filhos[i]->nChaves >= t) // 2A
+        {
+            No *y = filmes->filhos[i];
+            while (!y->eFolha)
+                y = y->filhos[y->nChaves];
+            Filme *temp = y->chave[y->nChaves - 1];
+            filmes->filhos[i] = retirar_filme_helper(filmes->filhos[i], temp->titulo, t, p);
+            filmes->chave[i] = temp;
+            return filmes;
+        }
+        if (!filmes->eFolha && filmes->filhos[i + 1]->nChaves >= t) // 2B
+        {
+            No *y = filmes->filhos[i + 1];
+            while (!y->eFolha)
+                y = y->filhos[0];
+            Filme *temp = y->chave[0];
+            y = retirar_filme_helper(filmes->filhos[i + 1], temp->titulo, t, p);
+            filmes->chave[i] = temp;
+            return filmes;
+        }
+        if (!filmes->eFolha && filmes->filhos[i + 1]->nChaves == t - 1 && filmes->filhos[i]->nChaves == t - 1) // 2C
+        {
+            No *y = filmes->filhos[i];
+            No *z = filmes->filhos[i + 1];
+            y->chave[y->nChaves] = p;
+            int j;
+            for (j = 0; j < t - 1; j++)
+            {
+                y->chave[t + j] = z->chave[j];
             }
-                // Combinação com o filho à direita
-            else {
-                raiz->filhos[indice]->chave[raiz->filhos[indice]->nChaves] = raiz->chave[indice];
-                for (int i = 0; i < raiz->filhos[indice + 1]->nChaves; i++) {
-                    raiz->filhos[indice]->chave[raiz->filhos[indice]->nChaves + 1 + i] = raiz->filhos[indice + 1]->chave[i];
-                }
-                raiz->filhos[indice]->nChaves += 1 + raiz->filhos[indice + 1]->nChaves;
-                raiz->filhos[indice]->filhos[raiz->filhos[indice]->nChaves] = raiz->filhos[indice + 1]->filhos[0];
-                free(raiz->filhos[indice + 1]);
-                for (int i = indice; i < raiz->nChaves - 1; i++) {
-                    raiz->chave[i] = raiz->chave[i + 1];
-                    raiz->filhos[i + 1] = raiz->filhos[i + 2];
-                }
-                raiz->nChaves--;
-                if (raiz->nChaves == 0) {
-                    No* tmp = raiz->filhos[0];
-                    free(raiz);
-                    raiz = tmp;
-                }
-                raiz->filhos[indice] = removerFilme(raiz->filhos[indice], franquia, ordem);
+            for (j = 0; j < t; j++)
+            {
+                y->filhos[t + j] = z->filhos[j];
+                z->filhos[j] = NULL;
             }
-        } else {
-            // Se o filho que contém a chave tem ORDEM ou mais chaves, remova recursivamente
-            raiz->filhos[indice] = removerFilme(raiz->filhos[indice], franquia, ordem);
+            y->nChaves = 2 * t - 1;
+            for (j = i; j < filmes->nChaves - 1; j++)
+            {
+                filmes->chave[j] = filmes->chave[j + 1];
+            }
+            for (j = i + 1; j < filmes->nChaves; j++)
+            {
+                filmes->filhos[j] = filmes->filhos[j + 1];
+            }
+            filmes->filhos[j] = NULL;
+            free_filmes_remove(z);
+            filmes->nChaves--;
+            if (!filmes->nChaves)
+            {
+                No *temp = filmes;
+                filmes = filmes->filhos[0];
+                temp->filhos[0] = NULL;
+                free_filmes_remove(temp);
+                filmes = retirar_filme_helper(filmes, titulo, t, p);
+            }
+            else
+            {
+                filmes->filhos[i] = retirar_filme_helper(filmes->filhos[i], titulo, t, p);
+            }
+            return filmes;
         }
     }
+    No *y = filmes->filhos[i], *z = NULL;
+    if (y->nChaves == t - 1) // 3A e 3B
+    {
+        if ((i < filmes->nChaves) && (filmes->filhos[i + 1]->nChaves >= t))
+        {
+            z = filmes->filhos[i + 1];
+            y->chave[t - 1] = filmes->chave[i];
+            y->nChaves++;
+            filmes->chave[i] = z->chave[0];
+            int j;
+            for (j = 0; j < z->nChaves - 1; j++)
+            {
+                z->chave[j] = z->chave[j + 1];
+            }
+            y->filhos[y->nChaves] = z->filhos[0];
+            for (j = 0; j < z->nChaves; j++)
+            {
+                z->filhos[j] = z->filhos[j + 1];
+            }
+            z->nChaves--;
+            filmes->filhos[i] = retirar_filme_helper(filmes->filhos[i], titulo, t, p);
+            return filmes;
+        }
+        if ((i > 0) && (!z) && (filmes->filhos[i - 1]->nChaves >= t))
+        {
+            z = filmes->filhos[i - 1];
+            int j;
+            for (j = y->nChaves; j > 0; j--)
+            {
+                y->chave[j] = y->chave[j - 1];
+            }
+            for (j = y->nChaves + 1; j > 0; j--)
+            {
+                y->filhos[j] = y->filhos[j - 1];
+            }
+            y->chave[0] = filmes->chave[i - 1];
+            y->nChaves++;
+            filmes->chave[i - 1] = z->chave[z->nChaves - 1];
+            y->filhos[0] = z->filhos[z->nChaves];
+            z->nChaves--;
+            filmes->filhos[i] = retirar_filme_helper(y, titulo, t, p);
+            return filmes;
+        }
+        if (!z)
+        {
+            if (i < filmes->nChaves && filmes->filhos[i + 1]->nChaves == t - 1)
+            {
+                z = filmes->filhos[i + 1];
+                y->chave[t - 1] = filmes->chave[i];
+                y->nChaves++;
+                int j;
+                for (j = 0; j < t - 1; j++)
+                {
+                    y->chave[t + j] = z->chave[j];
+                    y->nChaves++;
+                }
+                if (!y->eFolha)
+                {
+                    for (j = 0; j < t; j++)
+                    {
+                        y->filhos[t + j] = z->filhos[j];
+                        z->filhos[j] = NULL;
+                    }
+                }
+                free_filmes(z);
+                for (j = i; j < filmes->nChaves - 1; j++)
+                {
+                    filmes->chave[j] = filmes->chave[j + 1];
+                    filmes->filhos[j + 1] = filmes->filhos[j + 2];
+                }
+                filmes->filhos[filmes->nChaves] = NULL;
+                filmes->nChaves--;
+                if (!filmes->nChaves)
+                {
+                    No *temp = filmes;
+                    filmes = filmes->filhos[0];
+                    temp->filhos[0] = NULL;
+                    free_filmes(temp);
+                }
+                filmes = retirar_filme_helper(filmes, titulo, t, p);
+                return filmes;
+            }
+            if (i > 0 && filmes->filhos[i - 1]->nChaves == t - 1)
+            {
+                z = filmes->filhos[i - 1];
+                if (i == filmes->nChaves)
+                    z->chave[t - 1] = filmes->chave[i - 1];
+                else
+                    z->chave[t - 1] = filmes->chave[i];
+                z->nChaves++;
+                int j;
+                for (j = 0; j < t - 1; j++)
+                {
+                    z->chave[t + j] = y->chave[j];
+                    z->nChaves++;
+                }
+                if (!z->eFolha)
+                {
+                    for (j = 0; j < t; j++)
+                    {
+                        z->filhos[t + j] = y->filhos[j];
+                        y->filhos[j] = NULL;
+                    }
+                }
+                free_filmes(y);
+                filmes->filhos[filmes->nChaves] = NULL;
+                filmes->nChaves--;
+                if (!filmes->nChaves)
+                {
+                    No *temp = filmes;
+                    filmes = filmes->filhos[0];
+                    temp->filhos[0] = NULL;
+                    free_filmes(temp);
+                }
+                else
+                    filmes->filhos[i - 1] = z;
+                filmes = retirar_filme_helper(filmes, titulo, t, p);
+                return filmes;
+            }
+        }
+    }
+    filmes->filhos[i] = retirar_filme_helper(filmes->filhos[i], titulo, t, p);
+    return filmes;
+}
 
-    return raiz;
+No *retirar_filme(No *filmes, char titulo[81], int ano, int t)
+{
+    Filme *p = buscar_filme(filmes, titulo, ano);
+    if (!p || !filmes)
+    {
+        printf("Filme não encontrado\n");
+        return filmes;
+    }
+    filmes = retirar_filme_helper(filmes, titulo, t, p);
+    printf("Filme removido\n");
+    return filmes;
+}
+
+No *retirar_diretor(No *filmes, char diretor[51], int t)
+{
+    // retirar todos os filmes com o diretor especificado
+}
+
+No *retirar_genero(No *filmes, char genero[31], int t)
+{
+    // retirar todos os filmes com o genero especificado
+}
+
+No *retirar_franquia(No *filmes, char franqui[81], int t)
+{
+    // retirar todos os filmes de uma franquia especificada
 }
 
 #endif
