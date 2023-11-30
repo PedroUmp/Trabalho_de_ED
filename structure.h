@@ -161,7 +161,7 @@ No *inserir_filme_incompleto(No *filmes, Filme *filme, int t)
 {
     int i = filmes->nChaves - 1;
 
-    if (filmes->eFolha)
+if (filmes->eFolha)
     {
         while (i >= 0 && strcmp(filme->titulo, filmes->chave[i]->titulo) < 0)
         {
@@ -276,9 +276,122 @@ No *retirar_genero(No *filmes, char genero[31])
     // retirar todos os filmes com o genero especificado
 }
 
-No *retirar_franquia(No *filmes, char franquia[81])
-{
-    // retirar todos os filmes com a franquia especificada
+int buscarChave(No* no, const char* franquia) {
+    int i = 0;
+    while (i < no->nChaves && strcmp(no->chave[i]->titulo, franquia) < 0) {
+        i++;
+    }
+    return i;
+}
+
+// Função para remover uma chave de um nó
+void removerChave(No* no, int indice) {
+    free(no->chave[indice]->titulo);
+    free(no->chave[indice]->diretor);
+    free(no->chave[indice]->genero);
+    free(no->chave[indice]);
+
+    for (int i = indice; i < no->nChaves - 1; i++) {
+        no->chave[i] = no->chave[i + 1];
+        no->filhos[i + 1] = no->filhos[i + 2];
+    }
+
+    no->nChaves--;
+}
+
+// Função para remover um filme de uma árvore B
+No *removerFilme(No* raiz, const char* franquia, int ordem) {
+    if (!raiz) {
+        return NULL;
+    }
+
+    int indice = buscarChave(raiz, franquia);
+
+    if (indice < raiz->nChaves && strcmp(raiz->chave[indice]->titulo, franquia) == 0) {
+        // A chave está presente neste nó
+        if (raiz->eFolha) {
+            // Se o nó é uma folha, apenas remova a chave
+            removerChave(raiz, indice);
+        } else {
+            // Se o nó não é uma folha, substitua a chave pelo sucessor in-order
+            No* sucessor = raiz->filhos[indice + 1];
+            while (!sucessor->eFolha) {
+                sucessor = sucessor->filhos[0];
+            }
+            raiz->chave[indice] = sucessor->chave[0];
+            raiz->filhos[indice + 1] = removerFilme(raiz->filhos[indice + 1], sucessor->chave[0]->titulo, ordem);
+        }
+    } else {
+        // A chave pode estar presente nos filhos do nó
+        int ehUltimo = (indice == raiz->nChaves);
+
+        if (raiz->filhos[indice]->nChaves < ordem) {
+            // Se o filho que contém a chave tem menos de ORDEM-1 chaves, preencha-o
+            // primeiro
+            // Se o filho à esquerda tem mais de ORDEM-1 chaves, empreste uma chave
+            if (indice != 0 && raiz->filhos[indice - 1]->nChaves >= ordem) {
+                raiz->filhos[indice]->chave[0] = raiz->chave[indice - 1];
+                raiz->chave[indice - 1] = raiz->filhos[indice - 1]->chave[raiz->filhos[indice - 1]->nChaves - 1];
+                raiz->filhos[indice - 1]->nChaves--;
+            }
+                // Se o filho à direita tem mais de ORDEM-1 chaves, empreste uma chave
+            else if (!ehUltimo && raiz->filhos[indice + 1]->nChaves >= ordem) {
+                raiz->filhos[indice]->chave[0] = raiz->chave[indice];
+                raiz->chave[indice] = raiz->filhos[indice + 1]->chave[0];
+                for (int i = 0; i < raiz->filhos[indice + 1]->nChaves - 1; i++) {
+                    raiz->filhos[indice + 1]->chave[i] = raiz->filhos[indice + 1]->chave[i + 1];
+                }
+                raiz->filhos[indice + 1]->nChaves--;
+            }
+                // Combinação com o filho à esquerda
+            else if (indice != 0) {
+                raiz->filhos[indice - 1]->chave[raiz->filhos[indice - 1]->nChaves] = raiz->chave[indice - 1];
+                for (int i = 0; i < raiz->filhos[indice]->nChaves; i++) {
+                    raiz->filhos[indice - 1]->chave[raiz->filhos[indice - 1]->nChaves + 1 + i] = raiz->filhos[indice]->chave[i];
+                }
+                raiz->filhos[indice - 1]->nChaves += 1 + raiz->filhos[indice]->nChaves;
+                raiz->filhos[indice - 1]->filhos[raiz->filhos[indice - 1]->nChaves] = raiz->filhos[indice]->filhos[0];
+                free(raiz->filhos[indice]);
+                for (int i = indice - 1; i < raiz->nChaves - 1; i++) {
+                    raiz->chave[i] = raiz->chave[i + 1];
+                    raiz->filhos[i + 1] = raiz->filhos[i + 2];
+                }
+                raiz->nChaves--;
+                if (raiz->nChaves == 0) {
+                    No* tmp = raiz->filhos[0];
+                    free(raiz);
+                    raiz = tmp;
+                }
+                raiz->filhos[indice - 1] = removerFilme(raiz->filhos[indice - 1], franquia, ordem);
+            }
+                // Combinação com o filho à direita
+            else {
+                raiz->filhos[indice]->chave[raiz->filhos[indice]->nChaves] = raiz->chave[indice];
+                for (int i = 0; i < raiz->filhos[indice + 1]->nChaves; i++) {
+                    raiz->filhos[indice]->chave[raiz->filhos[indice]->nChaves + 1 + i] = raiz->filhos[indice + 1]->chave[i];
+                }
+                raiz->filhos[indice]->nChaves += 1 + raiz->filhos[indice + 1]->nChaves;
+                raiz->filhos[indice]->filhos[raiz->filhos[indice]->nChaves] = raiz->filhos[indice + 1]->filhos[0];
+                free(raiz->filhos[indice + 1]);
+                for (int i = indice; i < raiz->nChaves - 1; i++) {
+                    raiz->chave[i] = raiz->chave[i + 1];
+                    raiz->filhos[i + 1] = raiz->filhos[i + 2];
+                }
+                raiz->nChaves--;
+                if (raiz->nChaves == 0) {
+                    No* tmp = raiz->filhos[0];
+                    free(raiz);
+                    raiz = tmp;
+                }
+                raiz->filhos[indice] = removerFilme(raiz->filhos[indice], franquia, ordem);
+            }
+        } else {
+            // Se o filho que contém a chave tem ORDEM ou mais chaves, remova recursivamente
+            raiz->filhos[indice] = removerFilme(raiz->filhos[indice], franquia, ordem);
+        }
+    }
+
+    return raiz;
 }
 
 #endif

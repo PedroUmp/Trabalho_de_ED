@@ -174,10 +174,35 @@ int main()
             break;
         }
 
-        case 10:
-        {
-            break;
-        }
+            case 10:
+            {
+                char *franquia = (char*)malloc(sizeof(char)*81);
+                No *copia_Filme = filmes;
+                if(!franquia){
+                    printf("Falha na alocação");
+                    break;
+                }
+                printf("Digite a franquia que você deseja remover: ");
+                fgets(franquia, 81, stdin);
+                franquia[strcspn(genero, "\n")] = '\0';
+                filmes = removerFilme(filmes, "Star Wars", t);
+                free(franquia);
+                //fazer todos os testes de allocação bem sucedida
+                break;
+            }
+
+            case 11: //para teste
+            {
+                Filme *novo = criar_filme("Star Wars Episode IV A New Hope", 1922, "george lucas", 120, "acão");
+                Filme *novo2 = criar_filme("Star Wars Episode 2 quero transar", 1920, "george lucas", 120, "acão");
+                Filme *novo3 = criar_filme("Star Wars Episode 3 pierre dá pro arthur", 1920, "george lucas", 120, "acão");
+                Filme *novo4 = criar_filme("maze runner penis", 1920, "george lucas", 412, "acão");
+                printf("\nFilme criado: %s %d\n", novo->titulo, novo->ano);
+                filmes = inserir_filme(filmes, novo, t);
+                filmes = inserir_filme(filmes, novo2, t);
+                filmes = inserir_filme(filmes, novo3, t);
+                filmes = inserir_filme(filmes, novo4, t);
+            }
 
         default:
         {
