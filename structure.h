@@ -531,17 +531,68 @@ No *retirar_filme(No *filmes, char titulo[81], int ano, int t)
 
 No *retirar_diretor(No *filmes, char diretor[51], int t)
 {
-    // retirar todos os filmes com o diretor especificado
+    if (!filmes)
+        return NULL;
+
+    for (int i = 0; i < filmes->nChaves; i++)
+    {
+        if (strstr(filmes->chave[i]->diretor, diretor) != NULL)
+        {
+            filmes = retirar_filme(filmes, filmes->chave[i]->titulo, filmes->chave[i]->ano, t);
+            i--;
+        }
+    }
+
+    for (int j = 0; j < filmes->nChaves + 1; j++)
+    {
+        filmes->filhos[j] = retirar_diretor(filmes->filhos[j], diretor, t);
+    }
+
+    return filmes;
 }
 
 No *retirar_genero(No *filmes, char genero[31], int t)
 {
-    // retirar todos os filmes com o genero especificado
+    if (!filmes)
+        return NULL;
+
+    for (int i = 0; i < filmes->nChaves; i++)
+    {
+        if (strstr(filmes->chave[i]->genero, genero) != NULL)
+        {
+            filmes = retirar_filme(filmes, filmes->chave[i]->titulo, filmes->chave[i]->ano, t);
+            i--;
+        }
+    }
+
+    for (int j = 0; j < filmes->nChaves + 1; j++)
+    {
+        filmes->filhos[j] = retirar_genero(filmes->filhos[j], genero, t);
+    }
+
+    return filmes;
 }
 
-No *retirar_franquia(No *filmes, char franqui[81], int t)
+No *retirar_franquia(No *filmes, char franquia[81], int t)
 {
-    // retirar todos os filmes de uma franquia especificada
+    if (!filmes)
+        return NULL;
+
+    for (int i = 0; i < filmes->nChaves; i++)
+    {
+        if (strstr(filmes->chave[i]->titulo, franquia) != NULL)
+        {
+            filmes = retirar_filme(filmes, filmes->chave[i]->titulo, filmes->chave[i]->ano, t);
+            i--;
+        }
+    }
+
+    for (int j = 0; j < filmes->nChaves + 1; j++)
+    {
+        filmes->filhos[j] = retirar_franquia(filmes->filhos[j], franquia, t);
+    }
+
+    return filmes;
 }
 
 #endif

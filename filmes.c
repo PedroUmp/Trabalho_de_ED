@@ -19,6 +19,7 @@ int main()
     char *titulo = (char *)malloc(sizeof(char));
     char *diretor = (char *)malloc(sizeof(char));
     char *genero = (char *)malloc(sizeof(char));
+    char *franquia = (char *)malloc(sizeof(char));
     int ano = 0;
     int duracao = 0;
 
@@ -33,9 +34,9 @@ int main()
         printf("5 - Listar filmes em ordem alfabética\n");
         printf("6 - Alterar filme com as informações subordinadas\n");
         printf("7 - Buscar todos os filmes de um determinado diretor\n");
-        printf("8 - Retirar todos os filmes de um determinado diretor\n"); // Atharv
-        printf("9 - Retirar todos os filmes de um determinado gênero\n");  // Atharv
-        printf("10 - Retirar todos os filmes de uma franquia\n");          // Gabriel
+        printf("8 - Retirar todos os filmes de um determinado diretor\n");
+        printf("9 - Retirar todos os filmes de um determinado gênero\n");
+        printf("10 - Retirar todos os filmes de uma franquia\n");
         printf("11 - Listar total de filmes\n");
         printf("Digite aqui: ");
 
@@ -151,7 +152,7 @@ int main()
 
         case 7:
         {
-            printf("Qual diretor voce quer buscar? ");
+            printf("Qual diretor você quer buscar? ");
             fgets(diretor, 51, stdin);
             diretor[strcspn(diretor, "\n")] = '\0';
 
@@ -162,29 +163,34 @@ int main()
 
         case 8:
         {
+            printf("Do qual diretor você quer retirar os filmes? ");
+            fgets(diretor, 51, stdin);
+            diretor[strcspn(diretor, "\n")] = '\0';
+
+            filmes = retirar_diretor(filmes, diretor, t);
+            printf("Filmes do %s retirados\n", diretor);
             break;
         }
 
         case 9:
         {
+            printf("Do qual gênero você quer retirar os filmes? ");
+            fgets(genero, 31, stdin);
+            genero[strcspn(genero, "\n")] = '\0';
+
+            filmes = retirar_genero(filmes, genero, t);
+            printf("Filmes do %s retirados\n", genero);
             break;
         }
 
         case 10:
         {
-            // char *franquia = (char *)malloc(sizeof(char) * 81);
-            // No *copia_Filme = filmes;
-            // if (!franquia)
-            // {
-            //     printf("Falha na alocação");
-            //     break;
-            // }
-            // printf("Digite a franquia que você deseja remover: ");
-            // fgets(franquia, 81, stdin);
-            // franquia[strcspn(genero, "\n")] = '\0';
-            // filmes = removerFilme(filmes, "Star Wars", t);
-            // free(franquia);
-            // // fazer todos os testes de allocação bem sucedida
+            printf("Da qual franquia você quer retirar os filmes? ");
+            fgets(franquia, 81, stdin);
+            franquia[strcspn(franquia, "\n")] = '\0';
+
+            filmes = retirar_franquia(filmes, franquia, t);
+            printf("Filmes da %s retirados\n", franquia);
             break;
         }
 
