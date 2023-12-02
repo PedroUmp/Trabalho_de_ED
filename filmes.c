@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "structure.h"
 #include "addData.h"
@@ -61,6 +62,7 @@ int main()
             printf("Qual o nome do filme? ");
             fgets(titulo, 81, stdin);
             titulo[strcspn(titulo, "\n")] = '\0';
+            titulo = strlwr(titulo);
 
             printf("Quando o filme foi lançado? ");
             scanf("%d", &ano);
@@ -69,6 +71,7 @@ int main()
             printf("Quem é o diretor do filme? ");
             fgets(diretor, 51, stdin);
             diretor[strcspn(diretor, "\n")] = '\0';
+            diretor = strlwr(diretor);
 
             printf("Quanto tempo em minutos dura o filme? ");
             scanf("%d", &duracao);
@@ -77,6 +80,7 @@ int main()
             printf("Qual o gênero do filme? ");
             fgets(genero, 31, stdin);
             genero[strcspn(genero, "\n")] = '\0';
+            genero = strlwr(genero);
 
             Filme *novo = criar_filme(titulo, ano, diretor, duracao, genero);
             printf("\nFilme criado: %s %d\n", novo->titulo, novo->ano);
@@ -89,6 +93,7 @@ int main()
             printf("Qual o nome do filme? ");
             fgets(titulo, 81, stdin);
             titulo[strcspn(titulo, "\n")] = '\0';
+            titulo = strlwr(titulo);
 
             printf("Quando o filme foi lançado? ");
             scanf("%d", &ano);
@@ -103,6 +108,7 @@ int main()
             printf("Qual nome do filme você deseja buscar? ");
             fgets(titulo, 81, stdin);
             titulo[strcspn(titulo, "\n")] = '\0';
+            titulo = strlwr(titulo);
 
             printf("Em que ano o filme foi lançado? ");
             scanf("%d", &ano);
@@ -128,6 +134,8 @@ int main()
             printf("Qual filme você deseja alterar? ");
             fgets(titulo, 81, stdin);
             titulo[strcspn(titulo, "\n")] = '\0';
+            titulo = strlwr(titulo);
+
 
             printf("Quando o filme foi lançado? ");
             scanf("%d", &ano);
@@ -136,6 +144,7 @@ int main()
             printf("Qual é o novo diretor? ");
             fgets(diretor, 51, stdin);
             diretor[strcspn(diretor, "\n")] = '\0';
+            diretor = strlwr(diretor);
 
             printf("Qual é a nova duração do filme? ");
             scanf("%d", &duracao);
@@ -144,6 +153,7 @@ int main()
             printf("Qual o novo gênero do filme? ");
             fgets(genero, 31, stdin);
             genero[strcspn(genero, "\n")] = '\0';
+            genero = strlwr(genero);
 
             filmes = alterar(filmes, titulo, ano, genero, diretor, duracao);
 
@@ -155,6 +165,7 @@ int main()
             printf("Qual diretor você quer buscar? ");
             fgets(diretor, 51, stdin);
             diretor[strcspn(diretor, "\n")] = '\0';
+            diretor = strlwr(diretor);
 
             printf("\nFilmes do diretor %s:\n", diretor);
             printar_filmes_diretor(filmes, diretor);
@@ -166,6 +177,7 @@ int main()
             printf("Do qual diretor você quer retirar os filmes? ");
             fgets(diretor, 51, stdin);
             diretor[strcspn(diretor, "\n")] = '\0';
+            diretor = strlwr(diretor);
 
             filmes = retirar_diretor(filmes, diretor, t);
             printf("Filmes do %s retirados\n", diretor);
@@ -177,6 +189,7 @@ int main()
             printf("Do qual gênero você quer retirar os filmes? ");
             fgets(genero, 31, stdin);
             genero[strcspn(genero, "\n")] = '\0';
+            genero = strlwr(genero);
 
             filmes = retirar_genero(filmes, genero, t);
             printf("Filmes do %s retirados\n", genero);
@@ -188,6 +201,7 @@ int main()
             printf("Da qual franquia você quer retirar os filmes? ");
             fgets(franquia, 81, stdin);
             franquia[strcspn(franquia, "\n")] = '\0';
+            franquia = strlwr(franquia);
 
             filmes = retirar_franquia(filmes, franquia, t);
             printf("Filmes da %s retirados\n", franquia);
