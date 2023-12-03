@@ -9,11 +9,11 @@
 int main()
 {
     int t;
+    int globalCounter = 0;
     printf("Digite o grau t: ");
     scanf("%d", &t);
-
     No *filmes = inicializar();
-    lerDadosArquivo("filmes.txt", &filmes, t);
+    lerDadosArquivo("C:\\Users\\volty\\OneDrive\\Documentos\\Trabalho de Ed\\Trabalho_de_ED\\filmes.txt", &filmes, t, &globalCounter);
 
     int continua = 1;
 
@@ -39,6 +39,7 @@ int main()
         printf("9 - Retirar todos os filmes de um determinado gênero\n");
         printf("10 - Retirar todos os filmes de uma franquia\n");
         printf("11 - Listar total de filmes\n");
+        printf("12 - Imprime método Rosseti\n");
         printf("Digite aqui: ");
 
         int resposta;
@@ -82,9 +83,10 @@ int main()
             genero[strcspn(genero, "\n")] = '\0';
             genero = strlwr(genero);
 
-            Filme *novo = criar_filme(titulo, ano, diretor, duracao, genero);
+            Filme *novo = criar_filme(titulo, ano, diretor, duracao, genero, &globalCounter);
             printf("\nFilme criado: %s %d\n", novo->titulo, novo->ano);
             filmes = inserir_filme(filmes, novo, t);
+            printf("id: %d", novo->id);
             break;
         }
 
@@ -214,6 +216,13 @@ int main()
             printf("Total de Filmes: %d\n", num);
             break;
         }
+
+            case 12:
+            {
+                imprimeId(filmes);
+                imp_rec(filmes, 0);
+                break;
+            }
 
         default:
         {

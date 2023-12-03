@@ -6,7 +6,7 @@
 
 #define MAX_TAM 300
 
-void lerDadosArquivo(const char *nomeArquivo, No **filmes, int t)
+void lerDadosArquivo(const char *nomeArquivo, No **filmes, int t, int *globalCounter)
 {
     FILE *arquivo = fopen(nomeArquivo, "r");
 
@@ -28,7 +28,7 @@ void lerDadosArquivo(const char *nomeArquivo, No **filmes, int t)
         genero = strlwr(genero);
         int duracao = atoi(strtok(NULL, "/"));
 
-        *filmes = inserir_filme(*filmes, criar_filme(titulo, ano, diretor, duracao, genero), t);
+        *filmes = inserir_filme(*filmes, criar_filme(titulo, ano, diretor, duracao, genero, globalCounter), t);
     }
 
     fclose(arquivo);

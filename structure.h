@@ -13,6 +13,7 @@ typedef struct filme
     char *genero;
     int ano;
     int duracao;
+    int id;
 } Filme;
 
 typedef struct no
@@ -23,7 +24,7 @@ typedef struct no
     int eFolha;
 } No;
 
-Filme *criar_filme(char *titulo, int ano, char *diretor, int duracao, char *genero)
+Filme *criar_filme(char *titulo, int ano, char *diretor, int duracao, char *genero, int *globalCounter)
 {
     Filme *novo = (Filme *)malloc(sizeof(Filme));
     novo->titulo = (char *)malloc(sizeof(char) * (strlen(titulo) + 1));
@@ -34,6 +35,8 @@ Filme *criar_filme(char *titulo, int ano, char *diretor, int duracao, char *gene
     novo->genero = (char *)malloc(sizeof(char) * (strlen(genero) + 1));
     strcpy(novo->genero, genero);
     novo->duracao = duracao;
+    novo->id = (*globalCounter);
+    (*globalCounter)++;
 
     return novo;
 }
@@ -88,7 +91,7 @@ void impressao(No *filmes)
     {
         if (filmes->filhos[i])
             impressao(filmes->filhos[i]);
-        printf("%s %d %s %d %s\n", filmes->chave[i]->titulo, filmes->chave[i]->ano, filmes->chave[i]->diretor, filmes->chave[i]->duracao, filmes->chave[i]->genero);
+        printf("%s %d %s %d %s %d\n", filmes->chave[i]->titulo, filmes->chave[i]->ano, filmes->chave[i]->diretor, filmes->chave[i]->duracao, filmes->chave[i]->genero, filmes->chave[i]->id);
         i++;
     }
     if (filmes->filhos[i])
@@ -573,26 +576,55 @@ No *retirar_genero(No *filmes, char genero[31], int t)
     return filmes;
 }
 
-No *retirar_franquia(No *filmes, char franquia[81], int t)
-{
+No *retirar_franquia(No *filmes, char franquia[81], int t) {
     if (!filmes)
         return NULL;
 
-    for (int i = 0; i < filmes->nChaves; i++)
-    {
-        if (strstr(filmes->chave[i]->titulo, franquia) != NULL)
-        {
+    for (int i = 0; i < filmes->nChaves; i++) {
+        if (filmes->chave[i] != NULL && strstr(filmes->chave[i]->titulo, franquia) != NULL) {
             filmes = retirar_filme(filmes, filmes->chave[i]->titulo, filmes->chave[i]->ano, t);
-            i--;
+            i--; // Volta uma posição para verificar se há mais filmes da franquia atual
         }
     }
 
-    for (int j = 0; j < filmes->nChaves + 1; j++)
-    {
-        filmes->filhos[j] = retirar_franquia(filmes->filhos[j], franquia, t);
+    for (int j = 0; j < filmes->nChaves + 1; j++) {
+        if (filmes->filhos[j] != NULL) {
+            filmes->filhos[j] = retirar_franquia(filmes->filhos[j], franquia, t);
+        }
     }
+
+    printf("filmes é diferente de null: %d\n", filmes != NULL);
 
     return filmes;
 }
+
+void imp_rec(No *a, int andar){
+    if(a){
+        int i,j;
+        for(i=0; i<=a->nChaves-1; i++){
+            imp_rec(a->filhos[i],andar+1);
+            for(j=0; j<=andar; j++) printf("\t");
+            printf("%d\n", a->chave[i]->id);
+        }
+        imp_rec(a->filhos[i],andar+1);
+    }
+}
+
+void imprimeId(No *filmes) {
+    if(!filmes) return;
+
+    int i=0;
+    while(i<filmes->nChaves) {
+        if(filmes->filhos[i]) imprimeId(filmes->filhos[i]);
+        printf("%s %d\n", filmes->chave[i]->titulo, filmes->chave[i]->id);
+        i++;
+    }
+
+    if(filmes->filhos[i]) imprimeId(filmes->filhos[i]);
+}
+
+//}
+
+
 
 #endif
