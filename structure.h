@@ -560,7 +560,7 @@ No *retirar_genero(No *filmes, char genero[51], int t) {
 
     int i=0;
     while(filmes && i < filmes->nChaves) {
-        if (filmes->chave[i] != NULL && strstr(filmes->chave[i]->genero, genero) != 0) {
+        if (filmes->chave[i] != NULL && strstr(filmes->chave[i]->genero, genero) != NULL) {
             filmes = retirar_filme(filmes, filmes->chave[i]->titulo, filmes->chave[i]->ano, t);
             i--;
         }
