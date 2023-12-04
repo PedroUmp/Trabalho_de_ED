@@ -13,7 +13,7 @@ int main()
     printf("Digite o grau t: ");
     scanf("%d", &t);
     No *filmes = inicializar();
-    lerDadosArquivo("filmes.txt", &filmes, t, &globalCounter);
+    lerDadosArquivo("C:\\Users\\gabri\\OneDrive\\Documentos\\ClionProjects\\filmes.txt", &filmes, t, &globalCounter);
 
     int continua = 1;
 
@@ -138,6 +138,7 @@ int main()
             titulo[strcspn(titulo, "\n")] = '\0';
             titulo = strlwr(titulo);
 
+
             printf("Quando o filme foi lançado? ");
             scanf("%d", &ano);
             getchar();
@@ -215,12 +216,12 @@ int main()
             break;
         }
 
-        case 12:
-        {
-            imprimeId(filmes);
-            imp_rec(filmes, 0);
-            break;
-        }
+            case 12:
+            {
+                imprimeId(filmes);
+                imp_rec(filmes, 0);
+                break;
+            }
 
         default:
         {
