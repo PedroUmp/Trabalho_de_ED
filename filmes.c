@@ -206,7 +206,6 @@ int main()
             franquia = strlwr(franquia);
 
             filmes = retirar_franquia(filmes, franquia, t);
-            printf("Filmes da %s retirados\n", franquia);
             break;
         }
 
