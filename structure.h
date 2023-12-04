@@ -542,6 +542,7 @@ No *retirar_diretor(No *filmes, char diretor[51], int t) {
             filmes = retirar_filme(filmes, filmes->chave[i]->titulo, filmes->chave[i]->ano, t);
             i--;
         }
+        i++;
     }
 
     if(filmes) {
@@ -557,23 +558,26 @@ No *retirar_diretor(No *filmes, char diretor[51], int t) {
 
 No *retirar_genero(No *filmes, char genero[31], int t)
 {
-    if (!filmes)
-        return NULL;
+    if (!filmes) return NULL;
 
-    for (int i = 0; i < filmes->nChaves; i++)
-    {
-        if (strstr(filmes->chave[i]->genero, genero) != NULL)
-        {
+
+    int i=0;
+    while(filmes && i < filmes->nChaves) {
+        if (filmes->chave[i] != NULL && strcmp(filmes->chave[i]->diretor, genero) == 0) {
             filmes = retirar_filme(filmes, filmes->chave[i]->titulo, filmes->chave[i]->ano, t);
             i--;
         }
+        i++;
     }
 
-    for (int j = 0; j < filmes->nChaves + 1; j++)
-    {
-        filmes->filhos[j] = retirar_genero(filmes->filhos[j], genero, t);
+    if(filmes) {
+        for (int j = 0; j < filmes->nChaves; j++) {
+            if (filmes->filhos[j] != NULL) {
+                if (filmes->filhos[j]) filmes->filhos[j] = retirar_genero(filmes->filhos[j], genero, t);
+            }
+            filmes->filhos[filmes->nChaves] = retirar_genero(filmes->filhos[filmes->nChaves], genero, t);
+        }
     }
-
     return filmes;
 }
 
@@ -581,14 +585,13 @@ No *retirar_franquia(No *filmes, char franquia[81], int t) {
     if (!filmes)
         return NULL;
 
-
     int i=0;
     while(filmes && i < filmes->nChaves) {
         if (filmes->chave[i] != NULL && strstr(filmes->chave[i]->titulo, franquia) != NULL) {
-            printf("----------------removendo: %s\n", filmes->chave[i]->titulo);
             filmes = retirar_filme(filmes, filmes->chave[i]->titulo, filmes->chave[i]->ano, t);
             i--;
         }
+        i++;
     }
 
     if(filmes) {
@@ -614,36 +617,6 @@ void imp_rec(No *a, int andar){
         imp_rec(a->filhos[i],andar+1);
     }
 }
-
-//No* retirar_franquia(No* filmes, char franquia[81], int t) {
-//
-//    if (!filmes) return NULL;
-//    int i = 0;
-//    while (filmes && i < filmes->nChaves) {
-//        printf("inicio da recursao\n");
-//        if(filmes->filhos[i]) filmes->filhos[i] = retirar_franquia(filmes->filhos[i], franquia, t);
-//        printf("final da recursao\n");
-//        printf("inicio da recursao do irmao mais a direita\n");
-//        if(filmes->filhos[filmes->nChaves]) filmes->filhos[filmes->nChaves] = retirar_franquia(filmes->filhos[filmes->nChaves], franquia, t);
-//        printf("saida da recursao do irmao mais a direita\n");
-//        i++;
-//    }
-//
-//    int j =0;
-//    while (j < filmes->nChaves) {
-//        printf("%s", filmes->chave[j]->titulo);
-//    if (filmes->chave[j] && strstr(filmes->chave[j]->titulo, franquia) != NULL) {
-//            printf("filme %s a ser removido\n", filmes->chave[j]->titulo);
-//            filmes = retirar_filme(filmes, filmes->chave[j]->titulo, filmes->chave[j]->ano, t);
-//            j--;
-//            printf("filme removido\n");
-//        }
-//        j++;
-//
-//    }
-//    printf("pre retorno");
-//    return filmes;
-//}
 
 
 
