@@ -41,6 +41,21 @@ Filme *criar_filme(char *titulo, int ano, char *diretor, int duracao, char *gene
     return novo;
 }
 
+
+char* converterParaMinusculo(char *str) {
+    int i = 0;
+
+    while (str[i] != '\0') {
+        if (str[i] >= 'A' && str[i] <= 'Z') {
+            // Se o caractere for uma letra maiúscula, converte para minúscula
+            str[i] = str[i] + ('a' - 'A');
+        }
+        i++;
+    }
+    return str;
+}
+
+
 No *inicializar()
 {
     return NULL;
@@ -51,7 +66,7 @@ No *cria(int t)
     No *novo = (No *)malloc(sizeof(No));
     if (novo == NULL)
     {
-        printf("Falha na alocação de memória para o nó!\n");
+        printf("Falha na alocação de memoria para o no!\n");
         exit(1);
     }
 
@@ -61,14 +76,14 @@ No *cria(int t)
     novo->chave = (Filme **)malloc(sizeof(Filme *) * (2 * t - 1));
     if (!novo->chave)
     {
-        printf("Falha na alocação de memória para as chaves do nó!\n");
+        printf("Falha na alocação de memoria para as chaves do no!\n");
         exit(1);
     }
 
     novo->filhos = (No **)malloc(sizeof(No *) * (2 * t));
     if (!novo->filhos)
     {
-        printf("Falha na alocação de memória para os filhos do nó!\n");
+        printf("Falha na alocação de memoria para os filhos do no!\n");
         exit(1);
     }
 
@@ -221,7 +236,7 @@ No *alterar(No *filmes, char titulo[81], int ano, char nGenero[31], char nDireto
     }
     else
     {
-        printf("Filme não alterado e não encontrado\n");
+        printf("Filme não alterado e noo encontrado\n");
     }
     return filmes;
 }
@@ -524,7 +539,7 @@ No *retirar_filme(No *filmes, char titulo[81], int ano, int t)
     Filme *p = buscar_filme(filmes, titulo, ano);
     if (!p || !filmes)
     {
-        printf("Filme não encontrado\n");
+        printf("Filme nao encontrado\n");
         return filmes;
     }
     filmes = retirar_filme_helper(filmes, titulo, t, p);
@@ -621,7 +636,7 @@ void imprimeId(No *filmes) {
     int i=0;
     while(i<filmes->nChaves) {
         if(filmes->filhos[i]) imprimeId(filmes->filhos[i]);
-        printf("%s %d\n", filmes->chave[i]->titulo, filmes->chave[i]->id);
+        printf("titulo: %s, ano: %d, id: %d\n", filmes->chave[i]->titulo, filmes->chave[i]->ano, filmes->chave[i]->id);
         i++;
     }
 

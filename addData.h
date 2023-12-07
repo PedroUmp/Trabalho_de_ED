@@ -20,12 +20,12 @@ void lerDadosArquivo(const char *nomeArquivo, No **filmes, int t, int *globalCou
     while (fgets(linha, MAX_TAM, arquivo) != NULL)
     {
         char *titulo = strtok(linha, "/");
-        titulo = strlwr(titulo);
+        titulo = converterParaMinusculo(titulo);
         int ano = atoi(strtok(NULL, "/"));
         char *diretor = strtok(NULL, "/");
-        diretor = strlwr(diretor);
+        diretor = converterParaMinusculo(diretor);
         char *genero = strtok(NULL, "/");
-        genero = strlwr(genero);
+        genero = converterParaMinusculo(genero);
         int duracao = atoi(strtok(NULL, "/"));
 
         *filmes = inserir_filme(*filmes, criar_filme(titulo, ano, diretor, duracao, genero, globalCounter), t);
